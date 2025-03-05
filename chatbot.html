@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot จำแนกแมลง</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            margin: 0;
+        }
+        .chat-container {
+            width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .user-message {
+            background: #6e8efb;
+            color: white;
+            text-align: right;
+        }
+        .bot-message {
+            background: #eee;
+            text-align: left;
+        }
+        .input-container {
+            display: flex;
+            margin-top: 10px;
+        }
+        input, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #6e8efb;
+            color: white;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        button:hover {
+            background: #5a7be5;
+        }
+        .image-preview {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>แชทบอทจำแนกแมลง</h2>
+        <div class="chat-box" id="chat-box"></div>
+        <input type="file" id="image-upload" accept="image/*">
+        <img id="image-preview" class="image-preview" style="display:none;">
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="พิมพ์ข้อความ หรืออัปโหลดรูปภาพ...">
+            <button onclick="sendMessage()">ส่ง</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("image-upload").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("image-preview").src = e.target.result;
+                    document.getElementById("image-preview").style.display = "block";
+                    showBotMessage("ได้รับรูปภาพแล้ว กำลังวิเคราะห์...");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (userInput.trim() === "") return;
+            
+            showUserMessage(userInput);
+            document.getElementById("user-input").value = "";
+            setTimeout(() => {
+                const botResponse = getBotResponse(userInput);
+                showBotMessage(botResponse);
+            }, 500);
+        }
+
+        function showUserMessage(message) {
+            const chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += `<div class='message user-message'>${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showBotMessage(message) {
+            const chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += `<div class='message bot-message'>${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function getBotResponse(input) {
+            const insects = {
+                "แมงป่อง": "แมงป่องมีพิษปานกลาง อาการถูกต่อยคือปวดแสบปวดร้อน แนะนำให้ล้างแผลและใช้ยาแก้ปวด",
+                "ผึ้ง": "ผึ้งมีพิษรุนแรง อาการคือบวมแดงและแพ้รุนแรง แนะนำให้ดึงเหล็กในออกและรีบพบแพทย์",
+                "มดคันไฟ": "มดคันไฟทำให้เกิดอาการคันและปวด ใช้ยาทาแก้แพ้ลดอาการคันได้"
+                
+            };
+            
+
+            
+            return insects[input] || "ขออภัย ฉันยังไม่มีข้อมูลของแมลงชนิดนี้";
+        }
+    </script>
+</body>
+</html>
